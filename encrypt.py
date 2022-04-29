@@ -1,16 +1,12 @@
+"""Module for encrypting and decrypting """
 from keys import generate_prime, opposite_mod, second_key_part
-# Повідомлення перетворюють у цифрову форму, тобто записують у вигляді
-# послідовності цілих чисел.
 
-def to_numline(message):
+def to_numline(messege):
+    """Converts a messege into a number line."""
     code = ""
-    for let in message:
+    for let in messege:
         code += str(ord(let) - ord("A")).rjust(2, "0")
     return code
-
-# розбиваємо цей рядок на
-# рівного розміру блоки з 2 N цифр, де 2 – N найбільше додатне число таке, що 3232…32 (для
-# українського алфавіту), чи 2525…25 (для англійського) із 2 N цифр не перевищує n . У
 
 def len_block(n_value):
     """Returns a N value."""
@@ -55,21 +51,49 @@ def decrypt(encoded, d_val, n_val):
         decoded += str(int(block)**d_val % n_val).rjust(len(block), "0")
     return to_wordline(decoded)
 
-p = generate_prime()
-q = generate_prime()
-n = p*q
+
+def check_messege(messege):
+    """
+    Defines length of required block.
+    Edits the message if needed.
+    """
+    len_m = len(messege)
+    len_bl = 0
+    edited = False
+    if len_m % 2 == 0:
+        len_bl = 2
+    elif len_m % 3 == 0:
+        len_bl = 3
+    else:
+        len_bl = 2
+        edited = True
+        messege = messege + "A"
+    return len_bl, messege, edited
+
+
+messege_7 = "ABCDEFH"
+block_need, mes, edited_7 = check_messege(messege_7)
+print(block_need, mes, edited_7 )
+lenb = 0
+while lenb != block_need:
+    p = generate_prime(block_need)
+    q = generate_prime(block_need)
+    n = p*q
+    print(n, p, q)
+    lenb = len_block(n)
+
 e = second_key_part(p, q)
 d = opposite_mod(e, (p-1)*(q-1))
 
 print(f"p: {p}, q: {q}, n: {n}, e: {e}, d: {d}")
 print(f"LENBLOCK: {len_block(n)}")
 
-mes = "KATTYLOVESME"
 print("numline:", to_numline(mes))
 en = encrypt(mes, e, n)
 print("Encrypted", en)
-print(decrypt(en, d, n))
-# print(to_numline("MYFAVOTITETIENDA"))
-# en = encrypt("MYFAVOTITETIENDA", e, n)
-# print(en)
-# print(decrypt(en, d, n))
+de = decrypt(en, d, n)
+
+if edited_7:
+    print(de[:-1])
+else:
+    print(de)
