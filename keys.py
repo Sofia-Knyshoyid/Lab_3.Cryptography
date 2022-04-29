@@ -8,11 +8,11 @@ def is_prime(num):
             return False
     return True
 
-def generate_prime():
+def generate_prime(blocksize):
     """Generates a prime number."""
     prime = False
     while prime is False:
-        num = randint(2, 30)
+        num = randint(50, 10**blocksize)
         if is_prime(num):
             return num
 
@@ -32,7 +32,6 @@ def second_key_part(value_p, value_q):
             is_co_prime = True
     return num
 
-
 def opposite_mod(coef, mod):
     """Returns an opposite by mod calculated with extended euclidead"""
     s_c , t_c = [1, 0], [0, 1]
@@ -47,16 +46,8 @@ def opposite_mod(coef, mod):
         remainder = first % second
     return t_c[-1] % mod
 
-# вибирають два простих числа p і q ;
-p = generate_prime()
-q = generate_prime()
-# обчислюють першу частину відкритого ключа n = pq ;
+p = generate_prime(3)
+q = generate_prime(3)
 n = p*q
-#  визначають другу частину відкритого ключа – вибирають невелике непарне число e ,
-# яке має бути взаємно простим з числом ( p −1)(q −1)
 e = second_key_part(p, q)
-
-# обчислюють секретний ключ d , який є цілим числом, оберненим до e за
-# модулем ( p −1)(q −1): d = e–1 mod((p–1)(q–1)), тобто de ≡ 1 (mod(p–1)(q–1)); таке
-# обернене існує, бо gcd (e, (p – 1)(q – 1)) = 1.
 d = opposite_mod(e, (p-1)*(q-1))
