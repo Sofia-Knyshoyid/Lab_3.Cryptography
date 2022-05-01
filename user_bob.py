@@ -1,6 +1,7 @@
 import socket
 import threading
-from encrypt import gener_keys_get_message, encrypt_message, decrypt_message
+import hashlib
+from encrypt_alg import gener_keys_get_message, encrypt_message, decrypt_message
 
 class Client:
     def __init__(self, server_ip: str, port: int, username: str) -> None:
@@ -38,7 +39,7 @@ class Client:
 
             # decrypt message with the secrete key
             received = self.s.recv(1024).decode().split(' ')
-            print(received)
+            # print(received)
             msg, edited, e, n, d, receiver, username = received[0], int(received[1]), int(received[2]),\
                 int(received[3]), int(received[4]), received[5], received[6]
             print(f'...a private message received from {username}')
@@ -58,14 +59,22 @@ class Client:
 
             # encrypt message with the secrete key
             print('...generating the keys for the client')
-            message, edited, e, n, d = gener_keys_get_message(message)
+            got_message = message
+            message, e, n, d = gener_keys_get_message(message)
             
+            
+            # print(got_message, 'user message')
+            got_message = got_message.encode('utf-8')
+            sha3_512 = hashlib.sha3_512(got_message)
+            sha3_512_hex_digest = sha3_512.hexdigest()
+            # print(sha3_512_hex_digest, 'user hexidigest')
+
             # receiver = input('enter the name of the receiver or press Enter to send it to all users on the server:')
             # receiver = 'AllUsers' if receiver == '' else receiver
             message = encrypt_message(message, e, n)
             print(f'{self.username} is sending the encrypted message to the server...')
-            fin_str = message+' '+str(edited)+' '+str(e)+' '+str(n)+' '+str(d)+' '+receiver+' '+str(self.username)
-            print(fin_str)
+            fin_str = message+' '+str(0)+' '+str(e)+' '+str(n)+' '+str(d)+' '+receiver+' '+str(self.username)+' '+str(sha3_512_hex_digest)
+            # print(fin_str)
             fin_str = fin_str.encode()
             self.s.send(fin_str)
             print(f'{self.username} successfully sent the message!')
@@ -78,3 +87,4 @@ if __name__ == "__main__":
     finally:
         # cl.s.close()
         pass
+
