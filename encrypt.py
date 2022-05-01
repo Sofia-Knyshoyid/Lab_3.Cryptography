@@ -41,7 +41,7 @@ def encrypt(message, e_val, n_val):
     """Encrypts the message."""
     numline = to_numline(message)
     blocks = block_split(numline, n_val)
-    print(blocks)
+    # print(blocks)
     encoded = ""
     for block in blocks:
         encoded += str( modular_pow(int(block), e_val, n_val)).rjust(len(block), "0")
@@ -58,7 +58,7 @@ def to_wordline(encoded):
 def decrypt(encoded, d_val, n_val):
     """Decrypts an encoded message."""
     blocks = block_split(encoded, n_val)
-    print(blocks, "Dec")
+    # print(blocks, "Dec")
     decoded = ""
     for block in blocks:
         decoded += str(modular_pow(int(block), d_val, n_val)).rjust(len(block), "0")
@@ -76,31 +76,37 @@ def check_messege(num):
         return 2
     return 1
 
+def gener_keys_get_message(message="ABCDEFH"):
+    block_need = check_messege(len(message))
+    print(block_need)
+    print(f'the message for processing is: {message}')
+    lenb = 0
 
-messege_7 = "POTATO"
+    while (lenb != block_need):
+        p = generate_prime(block_need)
+        q = generate_prime(block_need)
+        n = p*q
+        if p != q:
+            lenb = len_block(n)
 
-block_need = check_messege(len(messege_7))
-print(block_need)
-lenb = 0
+    e = second_key_part(p, q)
+    d = opposite_mod(e, (p-1)*(q-1))
 
-while (lenb != block_need):
-    p = generate_prime(block_need)
-    q = generate_prime(block_need)
-    n = p*q
-    if p != q:
-        lenb = len_block(n)
+    print(f"p: {p}, q: {q}, n: {n}, e: {e}, d: {d}")
+    print(f"LENBLOCK: {len_block(n)}")
 
-e = second_key_part(p, q)
-d = opposite_mod(e, (p-1)*(q-1))
+    print("numline:", to_numline(message))
+    return message, e, n, d
 
-print(f"p: {p}, q: {q}, n: {n}, e: {e}, d: {d}")
-print(f"LENBLOCK: {len_block(n)}")
 
-print("numline:", to_numline(messege_7))
-en = encrypt(messege_7, e, n)
-print("Encrypted", en)
+def encrypt_message(mes, e, n):
+    en = encrypt(mes, e, n)
+    # print("Encrypted", en)
+    return en
 
 # block_need = check_messege(len(en)//2)
 
-de = decrypt(en, d, n)
-print(de)
+def decrypt_message(en, d, n, edited):
+    de = decrypt(en, d, n)
+    # print(de)
+    return de
