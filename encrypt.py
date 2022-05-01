@@ -10,6 +10,8 @@ def to_numline(messege):
 
 def len_block(n_value):
     """Returns a N value."""
+    if n_value < 26:
+        return 0
     count = 1
     start = 25
     while True:
@@ -18,6 +20,18 @@ def len_block(n_value):
             return count
         start = end
         count += 1
+
+def modular_pow(base, exp, mod):
+    """Memory-efficient modular power"""
+    if mod == 1:
+        return 0
+    c_val = 1
+    e_prime = 0
+    while e_prime < exp:
+        c_val = c_val * base % mod
+        e_prime += 1
+    return c_val
+
 
 def block_split(message, n_value):
     """Splits  the code into even 2N parts."""
@@ -30,8 +44,7 @@ def encrypt(message, e_val, n_val):
     print(blocks)
     encoded = ""
     for block in blocks:
-        encoded += str(int(block)**e_val % n_val).rjust(len(block), "0")
-        # print(str(int(block)**e_val % n_val).rjust(len(block), "0"), "ENC")
+        encoded += str( modular_pow(int(block), e_val, n_val)).rjust(len(block), "0")
     return encoded
 
 def to_wordline(encoded):
@@ -48,39 +61,34 @@ def decrypt(encoded, d_val, n_val):
     print(blocks, "Dec")
     decoded = ""
     for block in blocks:
-        decoded += str(int(block)**d_val % n_val).rjust(len(block), "0")
+        decoded += str(modular_pow(int(block), d_val, n_val)).rjust(len(block), "0")
     return to_wordline(decoded)
 
 
-def check_messege(messege):
+def check_messege(num):
     """
     Defines length of required block.
     Edits the message if needed.
     """
-    len_m = len(messege)
-    len_bl = 0
-    edited = False
-    if len_m % 2 == 0:
-        len_bl = 2
-    elif len_m % 3 == 0:
-        len_bl = 3
-    else:
-        len_bl = 2
-        edited = True
-        messege = messege + "A"
-    return len_bl, messege, edited
+    if num % 3 == 0:
+        return 3
+    if num % 2 == 0:
+        return 2
+    return 1
 
 
-messege_7 = "ABCDEFH"
-block_need, mes, edited_7 = check_messege(messege_7)
-print(block_need, mes, edited_7 )
+messege_7 = "POTATO"
+
+block_need = check_messege(len(messege_7))
+print(block_need)
 lenb = 0
-while lenb != block_need:
+
+while (lenb != block_need):
     p = generate_prime(block_need)
     q = generate_prime(block_need)
     n = p*q
-    print(n, p, q)
-    lenb = len_block(n)
+    if p != q:
+        lenb = len_block(n)
 
 e = second_key_part(p, q)
 d = opposite_mod(e, (p-1)*(q-1))
@@ -88,12 +96,11 @@ d = opposite_mod(e, (p-1)*(q-1))
 print(f"p: {p}, q: {q}, n: {n}, e: {e}, d: {d}")
 print(f"LENBLOCK: {len_block(n)}")
 
-print("numline:", to_numline(mes))
-en = encrypt(mes, e, n)
+print("numline:", to_numline(messege_7))
+en = encrypt(messege_7, e, n)
 print("Encrypted", en)
-de = decrypt(en, d, n)
 
-if edited_7:
-    print(de[:-1])
-else:
-    print(de)
+# block_need = check_messege(len(en)//2)
+
+de = decrypt(en, d, n)
+print(de)
