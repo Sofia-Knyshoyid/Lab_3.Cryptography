@@ -12,7 +12,7 @@ def generate_prime(blocksize):
     """Generates a prime number."""
     prime = False
     while prime is False:
-        num = randint(50, 10**blocksize)
+        num = randint(2, 10**blocksize)
         if is_prime(num):
             return num
 
@@ -45,6 +45,7 @@ def opposite_mod(coef, mod):
         second = remainder
         remainder = first % second
     return t_c[-1] % mod
+
 
 p = generate_prime(3)
 q = generate_prime(3)
