@@ -25,6 +25,6 @@ The private messages are redirected to a person confidentially.
 5. Different variations of possible encoding/decoding were tested,
 the examples can be seen in the relevant directory in this repository.
 The final working model that was implemented is the coding of messages
-consisting of capital letters only, both English and Ukrainian
+consisting of capital letters only, both English and Ukrainian languages
 
 6. The final modules used in testing are user_bob.py, user_alice.py, user_john.py and original_server.py
