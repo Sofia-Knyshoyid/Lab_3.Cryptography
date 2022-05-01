@@ -13,6 +13,7 @@ The following steps are processed in the program:
   - sending it as (hash, encrypted message)
   - decoding the message
   - comparing the hash of the message
+
 There are two types of the messages: the general and the private ones;
 The general are available to all the users on the server.
 The private messages are redirected to a person confidentially.
